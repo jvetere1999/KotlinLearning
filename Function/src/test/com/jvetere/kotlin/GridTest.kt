@@ -9,11 +9,13 @@ internal class GridTest {
 
     @Test
     fun basic(){
-        val grid: Grid = Grid(50,50, null)
+        val grid: Grid = Grid(10,10, null)
         assertAll("Basic Data",
-            { assertEquals(24, grid.logicalMaxX) },
-            { assertEquals(24, grid.logicalMaxY) }
+            { assertEquals(4, grid.logicalMaxX) },
+            { assertEquals(4, grid.logicalMaxY) }
         )
+        grid[0, 0] = true
+        println(grid.toString())
     }
     @Test
     fun get() {
