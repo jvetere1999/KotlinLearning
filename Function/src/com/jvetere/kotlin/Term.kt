@@ -53,7 +53,7 @@ data class Term(val neg  : Boolean, val const : Int, var variable : String, val 
 
     //TODO(Again make smaller)
 fun createTerm(exp : String) : Term{
-    val regex: Regex = Regex("((?:sin)|(?:cos)|(?:tan)|(?:ln)|(?:log)|(?:^[+-])|(?:[-]\\d)|(?:\\d+)|(?:x)|(?:[-][x]))")
+    val regex: Regex = Regex("\\(([^\\)]+)\\)|((?:sin)|(?:cos)|(?:tan)|(?:ln)|(?:log)|(?:^[+-])|(?:[-]\\d)|(?:\\d+)|(?:x)|(?:[-][x]))")
     val matches: Sequence<MatchResult> = regex.findAll(exp)
     val token: MutableList<String> = matches.map{ it.groupValues[1] }.toMutableList()
     var ne: Boolean = false
