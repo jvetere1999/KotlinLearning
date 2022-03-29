@@ -37,8 +37,8 @@ internal class TermKtTest {
         assertAll("Basic",
             { assertEquals(true,    term.neg) },
             { assertEquals(2,       term.const) },
-            { assertEquals(2,       term.exponent) },
-            { assertEquals("x",     term.variable) },
+            { assertEquals(1,       term.exponent) },
+            { assertEquals("x^2",     term.variable) },
             { assertEquals(-8.0,      term.calculate(2.0)) }
         )
         val firstDerivation: Term? = term.derive()

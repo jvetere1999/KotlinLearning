@@ -15,9 +15,10 @@ data class Term(val neg  : Boolean, val const : Int, var flag: OuterFunctionFlag
     init {
         negEx = variable.contains('-')
         if (negEx) variable = variable.substring(1);
-        innerTerm = if (variable.length > 1) createTerm(variable.replace("(","").replace(")", "")) else null
+        innerTerm = if (variable.length > 1) createTerm(variable) else null
     }
-    fun calculate(x: Double) : Double {
+    fun calculate(input: Double) : Double {
+        var x: Double = if (innerTerm != null) innerTerm!!.calculate(input) else input
         var value: Double = when (flag) {
             OuterFunctionFlag.NA    -> if (!negEx) (const * (pow(x.toDouble(), exponent.toDouble()))) else const * (pow((x.toDouble() * -1), exponent.toDouble()))
             OuterFunctionFlag.SIN   -> if (!negEx) sin(const * (pow(x.toDouble(), exponent.toDouble()))) else sin(const * (pow((x.toDouble() * -1), exponent.toDouble())))
@@ -69,7 +70,7 @@ fun createTerm(exp : String) : Term{
         if (isOp(x))
             flag = assignFlag(x)
         else if (x.matches(Regex("\\(([^\\)]+)\\)|[a-z]"))) {
-            variable = x;
+            variable = x.replace("(","").replace(")", "");
         }
     }
 
