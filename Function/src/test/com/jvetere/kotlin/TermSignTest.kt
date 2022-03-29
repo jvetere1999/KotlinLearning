@@ -47,19 +47,6 @@ internal class TermSignTest {
             { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
-        exp = "10sin2x"
-        term = createTerm(exp)
-        assertAll("sin4",
-            { assertEquals(false,   term.neg) },
-            { assertEquals(2,       term.const) },
-            { assertEquals(1,       term.exponent) },
-            { assertEquals("x",     term.variable) },
-            { assertEquals(9.093,       term.calculate((1.0))) },
-            { assertEquals(OuterFunctionFlag.SIN, term.flag) },
-            { assertEquals(false, term.negEx) },
-            { assertEquals(10,       term.leadingConst) }
-        )
-        println(StringBuilder("$exp test complete"))
     }
     @Test
     internal fun cosTrust() {
@@ -97,19 +84,6 @@ internal class TermSignTest {
             { assertEquals(0.878,       term.calculate((.5))) },
             { assertEquals(OuterFunctionFlag.COS, term.flag) },
             { assertEquals(false, term.negEx) }
-        )
-        println(StringBuilder("$exp test complete"))
-        exp = "10cos2x"
-        term = createTerm(exp)
-        assertAll("cos4",
-            { assertEquals(false,   term.neg) },
-            { assertEquals(2,       term.const) },
-            { assertEquals(1,       term.exponent) },
-            { assertEquals("x",     term.variable) },
-            { assertEquals(-4.161,       term.calculate(1.0)) },
-            { assertEquals(OuterFunctionFlag.COS, term.flag) },
-            { assertEquals(false, term.negEx) },
-            { assertEquals(10,       term.leadingConst) }
         )
         println(StringBuilder("$exp test complete"))
     }
@@ -151,19 +125,6 @@ internal class TermSignTest {
             { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
-        exp = "10tan2x^2"
-        term = createTerm(exp)
-        assertAll("tan4",
-            { assertEquals(false,   term.neg) },
-            { assertEquals(2,       term.const) },
-            { assertEquals(2,       term.exponent) },
-            { assertEquals("x",     term.variable) },
-            { assertEquals(-67.997,       term.calculate((2.0))) },
-            { assertEquals(OuterFunctionFlag.TAN, term.flag) },
-            { assertEquals(false, term.negEx) },
-            { assertEquals(10,       term.leadingConst) }
-        )
-        println(StringBuilder("$exp test complete"))
     }
     @Test
     internal fun lnTrust() {
@@ -201,19 +162,6 @@ internal class TermSignTest {
             { assertEquals(3.912,       term.calculate((5.0))) },
             { assertEquals(OuterFunctionFlag.LN, term.flag) },
             { assertEquals(false, term.negEx) }
-        )
-        println(StringBuilder("$exp test complete"))
-        exp = "10ln2x^2"
-        term = createTerm(exp)
-        assertAll("ln",
-            { assertEquals(false,   term.neg) },
-            { assertEquals(2,       term.const) },
-            { assertEquals(2,       term.exponent) },
-            { assertEquals("x",     term.variable) },
-            { assertEquals(39.12,       term.calculate((5.0))) },
-            { assertEquals(OuterFunctionFlag.LN, term.flag) },
-            { assertEquals(false, term.negEx) },
-            { assertEquals(10, term.leadingConst)}
         )
         println(StringBuilder("$exp test complete"))
     }

@@ -9,11 +9,13 @@ import java.math.RoundingMode
 import kotlin.math.*
 
 
-data class Term(val neg  : Boolean, val const : Int, var variable : String, val exponent : Int, var next: Term?, var flag: OuterFunctionFlag, val leadingConst: Int) : TypeCastException("ERR: Invalid input!") {
+data class Term(val neg  : Boolean, val const : Int, var flag: OuterFunctionFlag, var variable : String, val exponent : Int, var next: Term?) : TypeCastException("ERR: Invalid input!") {
     var negEx: Boolean = false;
+    var innerTerm: Term?;
     init {
         negEx = variable.contains('-')
         if (negEx) variable = variable.substring(1);
+        innerTerm = if (variable.length > 1) createTerm(variable.replace("(","").replace(")", "")) else null
     }
     fun calculate(x: Double) : Double {
         var value: Double = when (flag) {
@@ -24,9 +26,7 @@ data class Term(val neg  : Boolean, val const : Int, var variable : String, val 
             OuterFunctionFlag.LN    -> if (!negEx) ln(const * (pow(x.toDouble(), exponent.toDouble()))) else ln(const * (pow((x.toDouble() * -1), exponent.toDouble())))
             OuterFunctionFlag.LOG   -> if (!negEx) log(const * (pow(x.toDouble(), exponent.toDouble())), 10.0) else log(const * (pow((x.toDouble() * -1), exponent.toDouble())),10.0)
         }
-        if (leadingConst > 1) {
-            value *= leadingConst
-        }
+
         return BigDecimal(if (neg) -value else value).setScale(3, RoundingMode.HALF_EVEN).toDouble()
     }
     fun derive() : Term? {
@@ -34,66 +34,54 @@ data class Term(val neg  : Boolean, val const : Int, var variable : String, val 
             return null;
         return if (next != null) {
             when(flag) {
-                OuterFunctionFlag.NA    -> Term(neg, const * exponent, variable, exponent - 1, next?.derive(), flag, leadingConst)
-                OuterFunctionFlag.SIN   -> Term(neg, const * exponent, variable, exponent - 1, next?.derive(), OuterFunctionFlag.COS, leadingConst)
-                OuterFunctionFlag.COS   -> Term(!neg, const * exponent, variable, exponent - 1, next?.derive(), OuterFunctionFlag.SIN, leadingConst)
+                OuterFunctionFlag.NA    -> Term(neg, const * exponent, flag, variable, exponent - 1, next?.derive())
+                OuterFunctionFlag.SIN   -> Term(neg, const * exponent, OuterFunctionFlag.COS, variable, exponent - 1, next?.derive())
+                OuterFunctionFlag.COS   -> Term(!neg, const * exponent, OuterFunctionFlag.SIN, variable, exponent - 1, next?.derive())
                 OuterFunctionFlag.TAN   -> TODO("Consider adding inner terms for things like cos^2(x^2)")
-                OuterFunctionFlag.LN    -> Term(neg, const * exponent, variable, exponent - 1, next?.derive(), OuterFunctionFlag.NA, leadingConst)
+                OuterFunctionFlag.LN    -> Term(neg, const * exponent, OuterFunctionFlag.NA, variable, exponent - 1, next?.derive())
                 OuterFunctionFlag.LOG   -> TODO()
             }
         }
         else {
-            Term(neg, const * exponent, variable, exponent - 1, null, flag, leadingConst)
+            Term(neg, const * exponent ,flag , variable, exponent - 1, null)
         }
-    }
-    fun varNeg(): Boolean {
-        return negEx;
     }
 }
 
-    //TODO(Again make smaller)
 fun createTerm(exp : String) : Term{
-    val regex: Regex = Regex("\\(([^\\)]+)\\)|((?:sin)|(?:cos)|(?:tan)|(?:ln)|(?:log)|(?:^[+-])|(?:[-]\\d)|(?:\\d+)|(?:x)|(?:[-][x]))")
-    val matches: Sequence<MatchResult> = regex.findAll(exp)
-    val token: MutableList<String> = matches.map{ it.groupValues[1] }.toMutableList()
-    var ne: Boolean = false
-    var flag: OuterFunctionFlag = OuterFunctionFlag.NA
-    var outter: Int = 1;
-    if (token.contains("-") || token.contains("+")) {
-        ne = token[0] == "-"
-        token.removeAt(0)
-    }
-    if (isNumeric(token[0]) && token.size > 3){
-        outter = Integer.parseInt(token[0])
-        token.removeAt(0);
-    }
-    if (hasOp(token)) {
-        flag = assignFlag(token[0])
-        token.removeAt(0)
-    }
-    val term : Term = when (token.size) {
-        3 -> { Term(ne, (Integer.parseInt(token[0])), token[1], Integer.parseInt(token[2]), null, flag, outter) }
-        2 -> {
-            if (isNumeric(token[0])) Term(ne, (Integer.parseInt(token[0])), token[1], 1, null, flag, outter)
-            else Term(ne, 1, token[0], Integer.parseInt(token[1]), null, flag, outter)
+    val regex: Regex = Regex("\\(([^\\)]+)\\)|((?:sin)|(?:cos)|(?:tan)|(?:ln)|(?:log)|(?:^[+-])|(?:[-]\\d)|(?:\\d+)|(?:x)|(?:[-][x]))");
+    val token: MutableList<String> = regex.findAll(exp).map{ it.groupValues[0] }.toMutableList();
+    var neg: Boolean? = false;
+    var const: Int? = null;
+    var flag: OuterFunctionFlag? =null;
+    var variable: String? = null;
+    var exponent: Int? = null;
+    for (x in token){
+        if (isSign(x)) {
+            neg = token[0] == "-"
         }
-        1 -> {
-            if (isNumeric(token[0])) Term(ne, (Integer.parseInt(token[0])), "x", 0, null, flag, outter)
-            else Term(ne, (1), token[0], 1, null, flag, outter)
+        if (x.matches(Regex("[0-9]+"))){
+            if(flag == null && variable == null && const == null)
+                const = Integer.parseInt(x);
+            else
+                exponent = Integer.parseInt(x);
         }
-        else -> assertThrows<Term> {}
+        if (isOp(x))
+            flag = assignFlag(x)
+        else if (x.matches(Regex("\\(([^\\)]+)\\)|[a-z]"))) {
+            variable = x;
+        }
     }
-    return term
-}
 
-fun isNumeric(s : String): Boolean {
-    return !s.isNullOrEmpty() && s.matches(Regex("\\d+|[+-]\\d+"))
+    if (flag == null) flag = OuterFunctionFlag.NA;
+    if (const == null) const = 1;
+    if (exponent == null) exponent = if(variable == null) 0 else 1;
+    if (variable == null) variable = "x";
+    return Term(neg!!, const, flag, variable!!, exponent, null);
 }
-fun hasOp(l : MutableList<String>): Boolean {
-    if (l.isNullOrEmpty()) return false
-    for (s in l) {
-        if (s.matches(Regex("sin|cos|tan|ln|log")))
-            return true;
-    }
-    return false
+fun isSign(s : String): Boolean {
+    return !(s.isNullOrEmpty() || !s.matches(Regex("\\d+|[+-]\\d+")));
+}
+fun isOp(s : String): Boolean {
+    return !s.isNullOrEmpty() && s.matches(Regex("sin|cos|tan|ln|log"));
 }
