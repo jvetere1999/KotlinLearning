@@ -34,4 +34,12 @@ data class Graph(val yBound: Int, val xBound: Int, val functions: List<Function>
         }
         return flatGraph
     }
+
+    override fun toString(): String {
+        var sb: StringBuilder = StringBuilder();
+        for (grid in grids){
+            sb.append("$grid\n")
+        }
+        return sb.toString()
+    }
 }
