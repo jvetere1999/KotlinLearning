@@ -1,13 +1,37 @@
 package com.jvetere.kotlin.math
 
-data class Graph(val yBound: Int, val xBound: Int, val grids: List<Grid>?, val functions: List<Function>?) {
-    //TODO figure out 3d data structure and set it equal to an iteration over the list of functions adding their grid
+import java.util.stream.IntStream.range
 
-    operator fun get (y: Int, x: Int, z: Int): Int {
-        TODO("Call to 3D array")
+data class Graph(val yBound: Int, val xBound: Int, val functions: List<Function>) {
+    private var grids = Array(functions.size) { Grid(yBound, xBound, null) }
+    init {
+        for( x in range(0, xBound)) {
+            for (funcNum in range(0, functions.size)) {
+                val y: Double? = functions[funcNum](x)
+                if (y != null && y < yBound)
+                    grids[funcNum][y.toInt(), x] = true
+            }
+        }
+    }
+    operator fun get (z: Int, y: Int, x: Int): Boolean { //[z, y, x]
+        return grids[z][y, x]
+    }
+    operator fun get(z: Int): Grid {
+        return grids[z]
     }
 
     fun collapse(): Grid {
-        return TODO("Check go down check go down true bounce up set that space on new graph to true move on and just over and over")
+        var flatGraph: Grid = Grid(yBound, xBound, null)
+        for (y in range(0, yBound)) {
+            for (x in range(0, xBound)) {
+                for (z in range(0, functions.size)) {
+                    if (grids[z][y, x]) {
+                        flatGraph[y, x] = true
+                        break;
+                    }
+                }
+            }
+        }
+        return flatGraph
     }
 }
