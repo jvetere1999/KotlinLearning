@@ -1,4 +1,4 @@
-package com.jvetere.kotlin
+package com.jvetere.kotlin.math
 
 import java.util.stream.IntStream.range
 

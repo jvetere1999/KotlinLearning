@@ -1,8 +1,8 @@
-package test.com.jvetere.kotlin
+package test.com.jvetere.kotlin.mathtest
 
 import com.jvetere.kotlin.flags.OuterFunctionFlag
-import com.jvetere.kotlin.Term
-import com.jvetere.kotlin.createTerm
+import com.jvetere.kotlin.math.Term
+import com.jvetere.kotlin.math.createTerm
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.assertAll
