@@ -1,16 +1,18 @@
 package com.jvetere.kotlin.flags
 
-enum class OuterFunctionFlag {
-    SIN,
-    COS,
-    TAN,
-    LN,
-    LOG,
-    NA,
+import java.util.*
+
+enum class OuterFunctionFlag(val symbol: String) {
+    SIN("Sin("),
+    COS("Cos("),
+    TAN("Tan("),
+    LN("Ln("),
+    LOG("Log("),
+    NA(""),
 }
 
 fun assignFlag(outerFunction: String) : OuterFunctionFlag {
-    return when(outerFunction) {
+    return when(outerFunction.lowercase(Locale.getDefault())) {
         "sin" -> OuterFunctionFlag.SIN
         "cos" -> OuterFunctionFlag.COS
         "tan" -> OuterFunctionFlag.TAN

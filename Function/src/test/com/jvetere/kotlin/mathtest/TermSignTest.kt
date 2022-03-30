@@ -1,9 +1,9 @@
-package test.com.jvetere.kotlin
+package test.com.jvetere.kotlin.mathtest
 
 
-import com.jvetere.kotlin.Term
-import com.jvetere.kotlin.createTerm
 import com.jvetere.kotlin.flags.OuterFunctionFlag
+import com.jvetere.kotlin.math.Term
+import com.jvetere.kotlin.math.createTerm
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import kotlin.math.PI
@@ -20,7 +20,6 @@ internal class TermSignTest {
             { assertEquals("x",     term.variable) },
             { assertEquals(1.0,       term.calculate((PI/2))) },
             { assertEquals(OuterFunctionFlag.SIN, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
         exp = "sin(2x)"
@@ -32,7 +31,6 @@ internal class TermSignTest {
             { assertEquals("2x",     term.variable) },
             { assertEquals(0.0,       term.calculate((PI/2))) },
             { assertEquals(OuterFunctionFlag.SIN, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
         exp = "sin(2x^2)"
@@ -44,7 +42,6 @@ internal class TermSignTest {
             { assertEquals("2x^2",     term.variable) },
             { assertEquals(-.975,       term.calculate((PI/2))) },
             { assertEquals(OuterFunctionFlag.SIN, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
     }
@@ -59,7 +56,6 @@ internal class TermSignTest {
             { assertEquals("x",     term.variable) },
             { assertEquals(0.878,       term.calculate((.5))) },
             { assertEquals(OuterFunctionFlag.COS, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
         exp = "cos(2x)"
@@ -71,7 +67,6 @@ internal class TermSignTest {
             { assertEquals("2x",     term.variable) },
             { assertEquals(0.540,       term.calculate((.5))) },
             { assertEquals(OuterFunctionFlag.COS, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
         exp = "cos(2x^2)"
@@ -83,7 +78,6 @@ internal class TermSignTest {
             { assertEquals("2x^2",     term.variable) },
             { assertEquals(0.878,       term.calculate((.5))) },
             { assertEquals(OuterFunctionFlag.COS, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
     }
@@ -98,7 +92,6 @@ internal class TermSignTest {
             { assertEquals("x",     term.variable) },
             { assertEquals(-2.185,       term.calculate((2.0))) },
             { assertEquals(OuterFunctionFlag.TAN, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
         exp = "tan(2x)"
@@ -110,7 +103,6 @@ internal class TermSignTest {
             { assertEquals("2x",     term.variable) },
             { assertEquals(1.158,       term.calculate((2.0))) },
             { assertEquals(OuterFunctionFlag.TAN, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
         exp = "tan(2x^2)"
@@ -122,7 +114,6 @@ internal class TermSignTest {
             { assertEquals("2x^2",     term.variable) },
             { assertEquals(-6.8,       term.calculate((2.0))) },
             { assertEquals(OuterFunctionFlag.TAN, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
     }
@@ -137,7 +128,6 @@ internal class TermSignTest {
             { assertEquals("x",     term.variable) },
             { assertEquals(.693,       term.calculate((2.0))) },
             { assertEquals(OuterFunctionFlag.LN, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
         exp = "ln(2x)"
@@ -149,7 +139,6 @@ internal class TermSignTest {
             { assertEquals("2x",     term.variable) },
             { assertEquals(2.303,       term.calculate((5.0))) },
             { assertEquals(OuterFunctionFlag.LN, term.flag) },
-            { assertEquals(false, term.negEx) }
         )
         println(StringBuilder("$exp test complete"))
         exp = "ln(2x^2)"
@@ -161,7 +150,7 @@ internal class TermSignTest {
             { assertEquals("2x^2",     term.variable) },
             { assertEquals(3.912,       term.calculate((5.0))) },
             { assertEquals(OuterFunctionFlag.LN, term.flag) },
-            { assertEquals(false, term.negEx) }
+
         )
         println(StringBuilder("$exp test complete"))
     }
@@ -176,7 +165,7 @@ internal class TermSignTest {
             { assertEquals("x",     term.variable) },
             { assertEquals(0.301,       term.calculate((2.0))) },
             { assertEquals(OuterFunctionFlag.LOG, term.flag) },
-            { assertEquals(false, term.negEx) }
+
         )
         println(StringBuilder("$exp test complete"))
     }

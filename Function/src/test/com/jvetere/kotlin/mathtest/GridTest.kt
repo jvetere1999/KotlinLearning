@@ -1,6 +1,6 @@
-package test.com.jvetere.kotlin
+package test.com.jvetere.kotlin.mathtest
 
-import com.jvetere.kotlin.Grid
+import com.jvetere.kotlin.math.Grid
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*

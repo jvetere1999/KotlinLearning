@@ -1,6 +1,7 @@
-package com.jvetere.kotlin
+package com.jvetere.kotlin.math
 
 import com.jvetere.kotlin.flags.OuterFunctionFlag
+import com.jvetere.kotlin.flags.StringForm
 import com.jvetere.kotlin.flags.assignFlag
 import org.junit.jupiter.api.assertThrows
 import java.lang.StrictMath.pow
@@ -10,22 +11,20 @@ import kotlin.math.*
 
 
 data class Term(val neg  : Boolean, val const : Int, var flag: OuterFunctionFlag, var variable : String, val exponent : Int, var next: Term?) : TypeCastException("ERR: Invalid input!") {
-    var negEx: Boolean = false;
-    var innerTerm: Term?;
-    init {
-        negEx = variable.contains('-')
-        if (negEx) variable = variable.substring(1);
-        innerTerm = if (variable.length > 1) createTerm(variable) else null
-    }
+    var innerTerm: Term? = if (variable.length > 1) createTerm(variable) else null;
+    val form: StringForm = StringForm.TERM // Outer use of our purposes
+
+    //TODO Could proably move this to op flags
     fun calculate(input: Double) : Double {
         var x: Double = if (innerTerm != null) innerTerm!!.calculate(input) else input
+
         var value: Double = when (flag) {
-            OuterFunctionFlag.NA    -> if (!negEx) (const * (pow(x.toDouble(), exponent.toDouble()))) else const * (pow((x.toDouble() * -1), exponent.toDouble()))
-            OuterFunctionFlag.SIN   -> if (!negEx) sin(const * (pow(x.toDouble(), exponent.toDouble()))) else sin(const * (pow((x.toDouble() * -1), exponent.toDouble())))
-            OuterFunctionFlag.COS   -> if (!negEx) cos(const * (pow(x.toDouble(), exponent.toDouble()))) else cos(const * (pow((x.toDouble() * -1), exponent.toDouble())))
-            OuterFunctionFlag.TAN   -> if (!negEx) tan(const * (pow(x.toDouble(), exponent.toDouble()))) else tan(const * (pow((x.toDouble() * -1), exponent.toDouble())))
-            OuterFunctionFlag.LN    -> if (!negEx) ln(const * (pow(x.toDouble(), exponent.toDouble()))) else ln(const * (pow((x.toDouble() * -1), exponent.toDouble())))
-            OuterFunctionFlag.LOG   -> if (!negEx) log(const * (pow(x.toDouble(), exponent.toDouble())), 10.0) else log(const * (pow((x.toDouble() * -1), exponent.toDouble())),10.0)
+            OuterFunctionFlag.NA    -> const * pow(x, exponent.toDouble())
+            OuterFunctionFlag.SIN   -> const * pow(sin(x), exponent.toDouble())
+            OuterFunctionFlag.COS   -> const * pow(cos(x), exponent.toDouble())
+            OuterFunctionFlag.TAN   -> const * pow(tan(x), exponent.toDouble())
+            OuterFunctionFlag.LN    -> const * pow(ln(x), exponent.toDouble())
+            OuterFunctionFlag.LOG   -> const * pow(log(x,10.0), exponent.toDouble())
         }
 
         return BigDecimal(if (neg) -value else value).setScale(3, RoundingMode.HALF_EVEN).toDouble()
@@ -47,8 +46,36 @@ data class Term(val neg  : Boolean, val const : Int, var flag: OuterFunctionFlag
             Term(neg, const * exponent ,flag , variable, exponent - 1, null)
         }
     }
+    override fun toString(): String {
+        var sb: StringBuilder = StringBuilder()
+        if (neg)
+            sb.append("-")
+        if (const != 1)
+            sb.append(const)
+        sb.append(flag.symbol)
+        if (flag != OuterFunctionFlag.NA) {
+            if (exponent == 1)
+                sb.append("$variable)")
+            if (exponent > 1 || exponent < 0)
+                sb.append("$variable)^$exponent")
+        }
+        else {
+            if (exponent == 1)
+                sb.append("$variable")
+            if (exponent > 1 || exponent < 0)
+                sb.append("$variable^$exponent")
+        }
+        if (hasNext())
+            sb.append(" + ")
+        if (sb == StringBuilder())
+            sb.append(1)
+        return sb.toString()
+    }
+    fun hasNext(): Boolean {
+        return next != null;
+    }
 }
-
+//TODO 1 not being accepted
 fun createTerm(exp : String) : Term{
     val regex: Regex = Regex("\\(([^\\)]+)\\)|((?:sin)|(?:cos)|(?:tan)|(?:ln)|(?:log)|(?:^[+-])|(?:[-]\\d)|(?:\\d+)|(?:x)|(?:[-][x]))");
     val token: MutableList<String> = regex.findAll(exp).map{ it.groupValues[0] }.toMutableList();
