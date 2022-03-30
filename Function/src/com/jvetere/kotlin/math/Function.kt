@@ -21,9 +21,10 @@ data class Function(val head: Term, val butt: Term) {
         var total: Double = 0.0;
         pointer = head
         while (pointer.hasNext()) {
-            total += pointer.calculate(x)
+            total += pointer(x)
             pointer = pointer.next!!
         }
+        total += pointer(x)
         return total;
     }
     fun nextTerm(): Term {
@@ -44,13 +45,15 @@ data class Function(val head: Term, val butt: Term) {
         sb.append(pointer)
         return sb.toString()
     }
+    operator fun invoke(x: Int): Double? {
+        return get(x)
+    }
 }
 
 fun createFunction(exp: String): Function {
     val termString: List<String> = exp.split("+")
     val head: Term = createTerm(termString[0])
     var prev: Term = head
-    println(termString)
     for ( x in range(1, termString.size) ){
         prev.next = createTerm(termString[x])
         prev = prev.next!!;

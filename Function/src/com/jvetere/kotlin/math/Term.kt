@@ -3,7 +3,6 @@ package com.jvetere.kotlin.math
 import com.jvetere.kotlin.flags.OuterFunctionFlag
 import com.jvetere.kotlin.flags.StringForm
 import com.jvetere.kotlin.flags.assignFlag
-import org.junit.jupiter.api.assertThrows
 import java.lang.StrictMath.pow
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -75,8 +74,9 @@ data class Term(val neg  : Boolean, val const : Int, var flag: OuterFunctionFlag
     fun hasNext(): Boolean {
         return next != null;
     }
-    operator fun invoke(x: Int): Double {
-        return calculate(x.toDouble());
+    operator fun invoke(x: Double): Double {
+        val calc:Double = calculate(x)
+        return calc;
     }
 }
 //TODO 1 not being accepted
