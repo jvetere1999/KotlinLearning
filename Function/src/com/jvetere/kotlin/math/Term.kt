@@ -79,7 +79,7 @@ data class Term(val neg  : Boolean, val const : Int, var flag: OuterFunctionFlag
         return calc;
     }
 }
-//TODO 1 not being accepted
+
 fun createTerm(exp : String) : Term{
     val regex: Regex = Regex("\\(([^\\)]+)\\)|((?:sin)|(?:cos)|(?:tan)|(?:ln)|(?:log)|(?:^[+-])|(?:[-]\\d)|(?:\\d+)|(?:x)|(?:[-][x]))");
     val token: MutableList<String> = regex.findAll(exp).map{ it.groupValues[0] }.toMutableList();
